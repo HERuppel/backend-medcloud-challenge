@@ -1,6 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
-import hello from '@functions/hello';
+import hello  from '@functions/hello';
+import getPatients from '@functions/listPatients';
 
 const serverlessConfiguration: AWS = {
   service: 'backend-medcloud-challenge',
@@ -11,7 +12,7 @@ const serverlessConfiguration: AWS = {
       includeModules: true,
     },
   },
-  plugins: ['serverless-webpack'],
+  plugins: ['serverless-webpack', 'serverless-offline'],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
@@ -21,11 +22,12 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      DYNAMODB_TABLE: 'patients',
     },
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
-  functions: { hello },
+  functions: { hello, getPatients },
 };
 
 module.exports = serverlessConfiguration;
