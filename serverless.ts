@@ -1,7 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
 import hello  from '@functions/hello';
-import getPatients from '@functions/listPatients';
+import listPatients from '@functions/listPatients';
 
 const serverlessConfiguration: AWS = {
   service: 'backend-medcloud-challenge',
@@ -33,7 +33,7 @@ const serverlessConfiguration: AWS = {
     }]
   },
   // import the function via paths
-  functions: { hello, getPatients },
+  functions: { hello, listPatients },
   resources: {
     Resources: {
       DynamoChallengeTable: {

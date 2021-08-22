@@ -1,3 +1,6 @@
 export default {
-  type: 'object'
+  type: 'object',
+  properties: {
+    patientId: { type: 'string' }
+  }
 } as const;
