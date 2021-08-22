@@ -16,6 +16,7 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
+    region: 'sa-east-1',
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -25,9 +26,36 @@ const serverlessConfiguration: AWS = {
       DYNAMODB_TABLE: 'patients',
     },
     lambdaHashingVersion: '20201221',
+    iamRoleStatements: [{
+      'Effect': 'Allow',
+      'Action': ['dynamodb:Query', 'dynamodb:Scan', 'dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+      'Resource': 'arn:aws:dynamodb:sa-east-1:*:table/patients'
+    }]
   },
   // import the function via paths
   functions: { hello, getPatients },
+  resources: {
+    Resources: {
+      DynamoChallengeTable: {
+        Type: 'AWS::DynamoDB::Table',
+        Properties: {
+          TableName: 'patients',
+          AttributeDefinitions: [{
+            'AttributeName' : 'patientId',
+            'AttributeType' : 'S'
+          }],
+          KeySchema: [{
+            'AttributeName' : 'patientId',
+            'KeyType' : 'HASH'
+          }],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1
+          }
+        }
+      }
+    }
+  }
 };
 
 module.exports = serverlessConfiguration;
