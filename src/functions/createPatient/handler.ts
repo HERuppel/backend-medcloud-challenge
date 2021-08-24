@@ -16,8 +16,6 @@ const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> =>
     const patientInfo = JSON.parse(JSON.stringify(event.body)) as IPatientInfo;
     const validation = formTypeCheck({ ...patientInfo });
 
-    console.log('PATIENTINFOS', patientInfo);
-
     if (validation.length !== 0) {
       return Responses._400({ message: validation.join(', ') });
     }
