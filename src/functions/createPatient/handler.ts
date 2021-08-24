@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { IPatientInfo, IResponse } from 'src/utils/interfaces';
 import { formTypeCheck } from 'src/utils/formTypeCheck';
 import Responses from 'src/utils/apiResponses';
+import { maritalStatuses } from 'src/utils/enums';
 
 const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> => {
   try {
@@ -28,7 +29,8 @@ const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> =>
       Item: {
         patientId: uuid(),
         createdAt: Date.now(),
-        ...patientInfo
+        ...patientInfo,
+        maritalStatus: maritalStatuses[patientInfo.maritalStatus]
       }
     };
 

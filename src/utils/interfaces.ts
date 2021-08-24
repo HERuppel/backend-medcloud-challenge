@@ -2,10 +2,9 @@ export interface IPatientInfo {
   firstName: string
   lastName: string
   birthdate: Date | string
-  age: number
   rg: string
   sex: boolean
-  maritalStatus: number
+  maritalStatus: string
   address: string
   city: string
   state: string
