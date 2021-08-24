@@ -3,31 +3,46 @@ import { middyfy } from '@libs/lambda';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { AWSError, DynamoDB } from 'aws-sdk';
 import { PromiseResult } from 'aws-sdk/lib/request';
+import KSUID from 'ksuid';
 
 const listPatients = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     const dynamoDb = new DynamoDB.DocumentClient();
 
-    console.log('QUERY PARAMS', event.queryStringParameters);
     const { offset, lastItemReceived } = event.queryStringParameters;
 
     const params = {
       TableName: process.env.DYNAMODB_TABLE
     };
+
     let list: PromiseResult<DynamoDB.DocumentClient.ScanOutput, AWSError>;
 
+    const { string } = KSUID.randomSync();
+    const creationId = string;
+
     if (Number(lastItemReceived) === 0) {
-      list = await dynamoDb.scan({ ...params, Limit: Number(offset)}).promise();
+      list = await dynamoDb.query({
+        ...params,
+        Limit: Number(offset),
+        ScanIndexForward: false,
+        KeyConditionExpression: 'patientId = :patientId and creationId < :creationId',
+        ExpressionAttributeValues: { ':patientId': process.env.PK_VALUE, ':creationId': creationId }
+      }).promise();
     } else {
-      const lastEvaluatedKey = { patientId: lastItemReceived };
-      console.log('LAST EVALUATED KEY', lastEvaluatedKey, typeof lastEvaluatedKey);
+      const lastEvaluatedKey = {
+        patientId: process.env.PK_VALUE,
+        creationId: lastItemReceived
+      };
 
-      list = await dynamoDb.scan({ ...params, Limit: Number(offset), ExclusiveStartKey: lastEvaluatedKey }).promise();
+      list = await dynamoDb.query({
+        ...params,
+        Limit: Number(offset),
+        ExclusiveStartKey: lastEvaluatedKey,
+        ScanIndexForward: false,
+        KeyConditionExpression: 'patientId = :patientId and creationId < :creationId',
+        ExpressionAttributeValues: { ':patientId': process.env.PK_VALUE, ':creationId': creationId }
+      }).promise();
     }
-
-
-
-    console.log('PAGINADO', list);
 
     if (!list) {
       return {
@@ -41,8 +56,6 @@ const listPatients = async (event: APIGatewayProxyEvent): Promise<APIGatewayProx
         },
       };
     }
-
-    console.log('PATIENTS', list);
 
     return {
       statusCode: 200,

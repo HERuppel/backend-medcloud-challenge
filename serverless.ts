@@ -24,6 +24,7 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       DYNAMODB_TABLE: 'patients',
+      PK_VALUE: 'cf6bd888-0511-11ec-9a03-0242ac130003' // UUID v4
     },
     lambdaHashingVersion: '20201221',
     iamRoleStatements: [{
@@ -43,10 +44,16 @@ const serverlessConfiguration: AWS = {
           AttributeDefinitions: [{
             'AttributeName' : 'patientId',
             'AttributeType' : 'S'
+          }, {
+            'AttributeName' : 'creationId',
+            'AttributeType' : 'S'
           }],
           KeySchema: [{
             'AttributeName' : 'patientId',
             'KeyType' : 'HASH'
+          }, {
+            'AttributeName' : 'creationId',
+            'KeyType' : 'RANGE'
           }],
           ProvisionedThroughput: {
             ReadCapacityUnits: 1,

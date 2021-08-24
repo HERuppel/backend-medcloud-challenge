@@ -5,3 +5,9 @@ export enum maritalStatuses {
   'Viúvo(a)' = 4,
   'Separado(a)' = 5
 }
+
+export enum genders {
+  'Feminino' = 1,
+  'Masculino' = 2,
+  'Outro' = 3
+}

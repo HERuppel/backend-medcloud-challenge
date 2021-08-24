@@ -1,19 +1,17 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { middyfy } from '@libs/lambda';
 import { DynamoDB } from 'aws-sdk';
-import { v4 as uuid } from 'uuid';
+import KSUID from 'ksuid';
 
 import { IPatientInfo, IResponse } from 'src/utils/interfaces';
 import { formTypeCheck } from 'src/utils/formTypeCheck';
 import Responses from 'src/utils/apiResponses';
-import { maritalStatuses } from 'src/utils/enums';
+import { maritalStatuses, genders } from 'src/utils/enums';
 
 const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> => {
   try {
 
     const dynamoDb = new DynamoDB.DocumentClient();
-
-    console.log('BODY', event.body);
 
     const patientInfo = JSON.parse(JSON.stringify(event.body)) as IPatientInfo;
     const validation = formTypeCheck({ ...patientInfo });
@@ -24,13 +22,19 @@ const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> =>
       return Responses._400({ message: validation.join(', ') });
     }
 
+    const { string } = KSUID.randomSync();
+    const creationId = string;
+
+    console.log('CREATION', creationId);
+
     const params = {
       TableName: process.env.DYNAMODB_TABLE,
       Item: {
-        patientId: uuid(),
-        createdAt: Date.now(),
+        patientId: process.env.PK_VALUE,
+        creationId,
         ...patientInfo,
-        maritalStatus: maritalStatuses[patientInfo.maritalStatus]
+        maritalStatus: maritalStatuses[patientInfo.maritalStatus],
+        gender: genders[patientInfo.gender]
       }
     };
 

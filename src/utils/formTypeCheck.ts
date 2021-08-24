@@ -1,6 +1,6 @@
 import { IPatientInfo } from './interfaces';
 
-export const formTypeCheck = ({ firstName, lastName, birthdate, maritalStatus, sex, rg, city, state, address, occupation, phone, subject }: IPatientInfo): string[] => {
+export const formTypeCheck = ({ firstName, lastName, birthdate, maritalStatus, gender, rg, city, state, address, occupation, phone, subject }: IPatientInfo): string[] => {
 
   const validationErrors: string[] = [];
 
@@ -8,7 +8,7 @@ export const formTypeCheck = ({ firstName, lastName, birthdate, maritalStatus, s
   typeof lastName!== 'string' && validationErrors.push('Check Last Name format');
   typeof birthdate !== 'string' && validationErrors.push('Check Birth Date format');
   typeof maritalStatus !== 'number' && validationErrors.push('Check Marital Status format');
-  typeof sex !== 'boolean' && validationErrors.push('Check Sex format');
+  typeof gender !== 'number' && validationErrors.push('Check Gender format');
   typeof rg !== 'string' && validationErrors.push('Check RG format');
   typeof city !== 'string' && validationErrors.push('Check City format');
   typeof state !== 'string' && validationErrors.push('Check State format');
