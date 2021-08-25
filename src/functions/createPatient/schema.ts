@@ -4,16 +4,16 @@ export default {
     firstName: { type: 'string' },
     lastName: { type: 'string' },
     rg: { type: 'string' },
-    birthdate: { type: 'Date' },
-    age: { type: 'number' },
-    sex: { type: 'boolean' },
+    birthdate: { type: 'number' },
+    gender: { type: 'number' },
     maritalStatus: { type: 'number' },
     address: { type: 'string' },
     city: { type: 'string' },
     state: { type: 'string' },
     phone: { type: 'string' },
     occupation: { type: 'string' },
-    subject: { type: 'string' }
+    subject: { type: 'string' },
+    notes: { type: 'string' }
   },
-  required: ['firstName', 'lastName', 'rg', 'birthdate', 'age', 'sex', 'maritalStatus', 'address', 'city', 'state', 'phone', 'occupation', 'subject']
+  required: ['firstName', 'lastName', 'rg', 'birthdate', 'gender', 'maritalStatus', 'address', 'city', 'state', 'phone', 'occupation', 'subject']
 } as const;

@@ -6,7 +6,8 @@ export default {
     {
       http: {
         method: 'post',
-        path: 'createPatient'
+        path: 'createPatient',
+        cors: true
       }
     }
   ]

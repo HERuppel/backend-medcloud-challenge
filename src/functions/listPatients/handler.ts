@@ -1,9 +1,9 @@
-import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { AWSError, DynamoDB } from 'aws-sdk';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import KSUID from 'ksuid';
+import apiResponse from 'src/utils/apiResponses';
 
 const listPatients = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -44,37 +44,13 @@ const listPatients = async (event: APIGatewayProxyEvent): Promise<APIGatewayProx
       }).promise();
     }
 
-    if (!list) {
-      return {
-        statusCode: 400,
-        body: 'No patients',
-        isBase64Encoded: false,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Methods': '*',
-          'Access-Control-Allow-Origin': '*',
-        },
-      };
-    }
+    if (!list)
+      return apiResponse({ message: 'Lista de pacientes vazia' }, 404);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(list),
-      isBase64Encoded: false,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Methods': '*',
-        'Access-Control-Allow-Origin': '*',
-      },
-    };
-
-
+    return apiResponse(list, 200);
   } catch (e) {
     console.log('errorrr', e);
-    return formatJSONResponse({
-      message: e,
-      event,
-    });
+    return apiResponse({ message: 'Ocorreu um erro interno.' }, 500);
   }
 
 

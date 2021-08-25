@@ -1,10 +1,13 @@
 import type { AWS } from '@serverless/typescript';
 
-import listPatients from '@functions/listPatients';
 import createPatient from '@functions/createPatient';
+import listPatients from '@functions/listPatients';
+import updatePatient from '@functions/updatePatient';
+import deletePatient from '@functions/deletePatient';
 
 const serverlessConfiguration: AWS = {
   service: 'backend-medcloud-challenge',
+  useDotenv: true,
   frameworkVersion: '2',
   custom: {
     webpack: {
@@ -23,8 +26,6 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      DYNAMODB_TABLE: 'patients',
-      PK_VALUE: 'cf6bd888-0511-11ec-9a03-0242ac130003' // UUID v4
     },
     lambdaHashingVersion: '20201221',
     iamRoleStatements: [{
@@ -33,14 +34,19 @@ const serverlessConfiguration: AWS = {
       'Resource': 'arn:aws:dynamodb:sa-east-1:*:table/patients'
     }]
   },
-  // import the function via paths
-  functions: { listPatients, createPatient },
+
+  functions: {
+    createPatient,
+    listPatients,
+    updatePatient,
+    deletePatient
+  },
   resources: {
     Resources: {
       DynamoChallengeTable: {
         Type: 'AWS::DynamoDB::Table',
         Properties: {
-          TableName: 'patients',
+          TableName: process.env.DYNAMODB_TABLE,
           AttributeDefinitions: [{
             'AttributeName' : 'patientId',
             'AttributeType' : 'S'

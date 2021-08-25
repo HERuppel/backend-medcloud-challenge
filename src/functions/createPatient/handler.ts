@@ -5,7 +5,7 @@ import KSUID from 'ksuid';
 
 import { IPatientInfo, IResponse } from 'src/utils/interfaces';
 import { formTypeCheck } from 'src/utils/formTypeCheck';
-import Responses from 'src/utils/apiResponses';
+import apiResponse from 'src/utils/apiResponses';
 import { maritalStatuses, genders } from 'src/utils/enums';
 
 const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> => {
@@ -17,13 +17,11 @@ const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> =>
     const validation = formTypeCheck({ ...patientInfo });
 
     if (validation.length !== 0) {
-      return Responses._400({ message: validation.join(', ') });
+      return apiResponse({ message: validation.join(', ') }, 400);
     }
 
     const { string } = KSUID.randomSync();
     const creationId = string;
-
-    console.log('CREATION', creationId);
 
     const params = {
       TableName: process.env.DYNAMODB_TABLE,
@@ -38,12 +36,9 @@ const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> =>
 
     const patient = await dynamoDb.put(params).promise();
 
-    console.log('CREATED PATIENT', patient);
-
-    return Responses._200(patient);
+    return apiResponse(patient, 201);
   } catch (e) {
-    console.log('ERROR: ', e);
-    return Responses._400({ message: e });
+    return apiResponse({ message: 'Ocorreu um problema ao criar o paciente!' }, 500);
   }
 
 };

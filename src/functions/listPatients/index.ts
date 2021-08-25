@@ -6,7 +6,8 @@ export default {
     {
       http: {
         method: 'get',
-        path: 'listPatients'
+        path: 'listPatients',
+        cors: true
       }
     }
   ]
