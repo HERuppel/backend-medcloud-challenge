@@ -7,7 +7,6 @@ import deletePatient from '@functions/deletePatient';
 
 const serverlessConfiguration: AWS = {
   service: 'backend-medcloud-challenge',
-  useDotenv: true,
   frameworkVersion: '2',
   custom: {
     webpack: {
@@ -19,19 +18,21 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
-    region: 'sa-east-1',
+    region: 'us-east-1',
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      DYNAMODB_TABLE: 'patients',
+      PK_VALUE: 'cf6bd888-0511-11ec-9a03-0242ac130003'
     },
     lambdaHashingVersion: '20201221',
     iamRoleStatements: [{
       'Effect': 'Allow',
       'Action': ['dynamodb:Query', 'dynamodb:Scan', 'dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
-      'Resource': 'arn:aws:dynamodb:sa-east-1:*:table/patients'
+      'Resource': 'arn:aws:dynamodb:us-east-1:*:table/patients'
     }]
   },
 
@@ -41,12 +42,13 @@ const serverlessConfiguration: AWS = {
     updatePatient,
     deletePatient
   },
+
   resources: {
     Resources: {
       DynamoChallengeTable: {
         Type: 'AWS::DynamoDB::Table',
         Properties: {
-          TableName: process.env.DYNAMODB_TABLE,
+          TableName: 'patients',
           AttributeDefinitions: [{
             'AttributeName' : 'patientId',
             'AttributeType' : 'S'

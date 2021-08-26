@@ -38,6 +38,7 @@ const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> =>
 
     return apiResponse(patient, 201);
   } catch (e) {
+    console.log(e);
     return apiResponse({ message: 'Ocorreu um problema ao criar o paciente!' }, 500);
   }
 
