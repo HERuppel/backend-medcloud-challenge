@@ -7,7 +7,7 @@ import apiResponse from 'src/utils/apiResponses';
 
 const listPatients = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
-    const dynamoDb = new DynamoDB.DocumentClient({ region: 'sa-east-1' });
+    const dynamoDb = new DynamoDB.DocumentClient();
 
     const { offset, lastItemReceived } = event.queryStringParameters;
 

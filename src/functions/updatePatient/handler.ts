@@ -28,7 +28,8 @@ const updatePatient = async (event: APIGatewayProxyEvent): Promise<IResponse> =>
       },
       UpdateExpression: 'set ' + Object.keys(newPatientObj).map(k => `#${k} = :${k}`).join(', '),
       ExpressionAttributeNames: Object.entries(newPatientObj).reduce((acc, cur) => ({...acc, [`#${cur[0]}`]: cur[0]}), {}),
-      ExpressionAttributeValues: Object.entries(newPatientObj).reduce((acc, cur) => ({...acc, [`:${cur[0]}`]: cur[1]}), {})
+      ExpressionAttributeValues: Object.entries(newPatientObj).reduce((acc, cur) => ({...acc, [`:${cur[0]}`]: cur[1]}), {}),
+      ReturnValues: 'UPDATED_NEW'
     };
 
     const patient = await dynamoDb.update(params).promise();

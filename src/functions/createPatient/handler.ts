@@ -34,7 +34,9 @@ const createPatient = async (event: APIGatewayProxyEvent): Promise<IResponse> =>
       }
     };
 
-    const patient = await dynamoDb.put(params).promise();
+    await dynamoDb.put(params).promise();
+
+    const patient = { ...params.Item };
 
     return apiResponse(patient, 201);
   } catch (e) {
